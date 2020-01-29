@@ -9,10 +9,12 @@
 * hasCollide: if doodle has collided with a block. (so it can now jump of from
 * that block)
 * */
-module DoodleManager #(SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT,
-	MAX_JUMP_HEIGHT)
-(doodleX, doodleY, left, right, hasCollide, clk, physicsUpdate, rest);
-begin
+module DoodleManager #(parameter SCREEN_WIDTH=400,
+	SCREEN_HEIGHT=700,
+	BLOCK_WIDTH=40,
+	BLOCK_HEIGHT=5,
+	MAX_JUMP_HEIGHT=80)
+(doodleX, doodleY, left, right, hasCollide, clk, physicsUpdate, reset);
 
 localparam UP = 1, DOWN = 0;
 
@@ -20,7 +22,7 @@ localparam UP = 1, DOWN = 0;
 output reg [31: 0] doodleX, doodleY;
 
 // INPUT
-input left, right, hasCollide, clk, reset;
+input left, right, hasCollide, clk, physicsUpdate, reset;
 
 // State
 // 1: UP 0: DOWN

@@ -1,12 +1,16 @@
-module ViewManager #(SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT)
+module ViewManager #(parameter SCREEN_WIDTH=400,
+	SCREEN_HEIGHT=700,
+	BLOCK_WIDTH=40,
+	BLOCK_HEIGHT=5)
 (minYCrossed, newView, minY, doodleY, reset);
+input reset;
 input [31: 0] doodleY;
 output reg minYCrossed, newView;
 output reg [31: 0] minY;
 
 reg [31:0] halfScreenPos;
 
-always @()
+always @(reset, doodleY, minY, halfScreenPos)
 begin
 	newView = 0;
 	minYCrossed = 0;

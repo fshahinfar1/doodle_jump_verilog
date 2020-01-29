@@ -17,25 +17,28 @@
 * collisionX: if doodle collides with a block, this shows the x index
 * collisionY: ... 
 * */
-module BlockManager #(SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT)
+module BlockManager #(parameter SCREEN_WIDTH=400,
+	SCREEN_HEIGHT=700,
+	BLOCK_WIDTH=40, BLOCK_HEIGHT=5)
 (blocksX, blocksY, isBlockActive, newView, minY,
 	collisionX, collisionY, hasCollide, reset);
 localparam BLOCK_IN_WIDTH = SCREEN_WIDTH / BLOCK_WIDTH;
 localparam BLOCK_IN_HEIGHT = SCREEN_HEIGHT / BLOCK_HEIGHT;
+localparam COUNT_BLOCKS = BLOCK_IN_HEIGHT * BLOCK_IN_WIDTH;
 
 // INPUTS
-input newView, minY, hasCollide, reset;
-input [31: 0] collisionX, collisionY ;  // a 32 bit integer for showing the index
+input newView, hasCollide, reset;
+input [31: 0] collisionX, collisionY, minY;  // a 32 bit integer for showing the index
 
 // OUTPUTS
-output reg [31:0][BLOCK_IN_WIDTH - 1: 0] blocksX [BLOCK_IN_HEIGHT - 1:0]; // 
-output reg [31:0][BLOCK_IN_WIDTH - 1: 0] blocksY [BLOCK_IN_HEIGHT - 1:0]; // 
-output reg [BLOCK_IN_WIDTH - 1: 0] isBlockActive [BLOCK_IN_HEIGHT - 1:0]; // 
+output reg [31:0][COUNT_BLOCKS-1:0] blocksX; // 
+output reg [31:0] [COUNT_BLOCKS- 1:0]blocksY; // 
+output reg [COUNT_BLOCKS- 1:0] isBlockActive; // 
 
 // Control register
-output reg [BLOCK_IN_WIDTH - 1: 0] ttl [BLOCK_IN_HEIGHT - 1:0]; // Time To leave
+output reg [COUNT_BLOCKS-1:0]ttl; // Time To leave
 
-integer i, j;
+integer i, j, index;
 
 // TODO: moving blocks,
 // TODO: destroying blocks,
@@ -48,16 +51,17 @@ begin
 		begin
 			// TODO: check miny to be greater
 			// initialize the Y of the block just at the bottom
-			blocksY[i][0] = minY;
+			blocksY[0] = {BLOCK_IN_WIDTH{minY}}; // FIXME: ??
 		end
 
 		for (j = 1; j < BLOCK_IN_HEIGHT; j++)
 		begin
 			for (i = 0; i < BLOCK_IN_WIDTH; i++)
 			begin
-				if (blocksY[i][j] < minY)
+				index = (i * BLOCK_IN_HEIGHT)  + j;
+				if (blocksY[index] < minY)
 				begin
-					blocksY[i][j] = minY + blocksY[i][j-1];
+					blocksY[index] = minY + blocksY[index - 1];
 				end
 			end
 		end
@@ -69,19 +73,21 @@ begin
 		begin
 			// initialize the X of the blocks just at the left side
 			// of the screen
-			blocksX[0][j] = 0;
+			blocksX[j] = 0;
 		end
 		for (i = 0; i < BLOCK_IN_WIDTH; i++)
 		begin
 			// initialize the Y of the block just at the bottom
-			blocksY[i][0] = 0;
+			index = (i * BLOCK_IN_HEIGHT);
+			blocksY[index] = 0;
 		end
 
 		for (j = 0; j < BLOCK_IN_HEIGHT; j++)
 		begin
 			for (i = 1; i < BLOCK_IN_WIDTH; i++)
 			begin
-				blocksX[i][j] = blocksX[i-1][j] + BLOCK_WIDTH;
+				index = (i * BLOCK_IN_HEIGHT) + j;
+				blocksX[index] = blocksX[index - BLOCK_IN_HEIGHT] + BLOCK_WIDTH;
 			end
 		end
 
@@ -89,7 +95,8 @@ begin
 		begin
 			for (i = 0; i < BLOCK_IN_WIDTH; i++)
 			begin
-				blocksY[i][j] = blocksY[i][j-1] + BLOCK_IN_HEIGHT;
+				index = (i * BLOCK_IN_HEIGHT) + j;
+				blocksY[index] = blocksY[index-1] + BLOCK_IN_HEIGHT;
 			end
 		end
 
@@ -99,7 +106,8 @@ begin
 			begin
 				// TODO: only active some of the blocks not
 				// all
-				isBlockActive = 1;
+				index = (i * BLOCK_IN_HEIGHT) + j;
+				isBlockActive[index] = 1;
 			end
 		end
 

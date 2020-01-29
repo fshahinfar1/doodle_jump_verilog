@@ -11,16 +11,39 @@ localparam BLK_H=5;
 localparam MAX_JMP_H=80;
 localparam BLOCK_IN_WIDTH = SCR_W / BLK_W;
 localparam BLOCK_IN_HEIGHT = SCR_H / BLK_H;
+localparam COUNT_BLOCKS = BLOCK_IN_HEIGHT * BLOCK_IN_WIDTH;
+localparam COUNT_PIXELS = SCR_W * SCR_H;
 
 input left, right, clk, reset;
 reg _left, _right, _clk, _reset;
 
 // screen
-output reg [23:0][SCREEN_WIDTH - 1: 0] screen [SCREEN_HEIGHT - 1: 0]; // r,g,b (8bit, 8bit, 8bit)
-wire [23:0][SCREEN_WIDTH - 1: 0] _screen [SCREEN_HEIGHT - 1: 0]; // r,g,b (8bit, 8bit, 8bit)
+output reg [23:0][COUNT_PIXELS - 1:0] screen; // r,g,b (8bit, 8bit, 8bit)
+wire [23:0][COUNT_PIXELS - 1:0] _screen; // r,g,b (8bit, 8bit, 8bit)
 
-RenderBox _renderBox #(SCR_W, SCR_H, BLK_W, BLK_H)
-			(_screen, doodleX, doodleY, blocksX, blocksY);
+// collision detector
+wire _hasCollide;
+wire [31: 0] _collisionX, _collisionY;
+reg hasCollide;
+reg [31 : 0] collisionX, collisionY;
+			
+// doodle manager
+wire [31:0] _doodleX, _doodleY;
+reg [31:0] doodleX, doodleY;
+
+// blocks manager
+wire [31:0][COUNT_BLOCKS - 1:0] _blocksX;
+wire [31:0][COUNT_BLOCKS - 1:0] _blocksY;
+wire [COUNT_BLOCKS - 1:0] _isBlockActive;
+reg [31:0][COUNT_BLOCKS - 1:0] blocksX;
+reg [31:0][COUNT_BLOCKS - 1:0] blocksY;
+reg [COUNT_BLOCKS - 1:0] isBlockActive;
+
+// view manager
+wire _minYCrossed, _newView;
+wire [31: 0] _minY;
+reg newView;
+reg [31: 0] minY;
 
 // create physics clk
 reg physicsUpdate;
@@ -35,41 +58,39 @@ begin
 	end
 end
 
-// doodle manager
-reg hasCollide; //TODO: make has collide
-wire [31:0] _doodleX, _doodleY;
-reg [31:0] doodleX, doodleY;
-DoodleManager _doodleMan #(SCR_W, SCR_H, BLK_W, BLK_H, MAX_JMP_H)
-				(_doodleX, _doodleY, _left, _right, hasCollide 
+DoodleManager #(.SCREEN_WIDTH(SCR_W),
+	.SCREEN_HEIGHT(SCR_H),
+	.BLOCK_WIDTH(BLK_W),
+	.BLOCK_HEIGHT(BLK_H),
+	.MAX_JUMP_HEIGHT(MAX_JMP_H)) _doodleMan
+				(_doodleX, _doodleY, _left, _right, hasCollide,
 					_clk, physicsUpdate, _reset);
 
-// blocks manager
-wire [31:0][BLOCK_IN_WIDTH - 1: 0] _blocksX [BLOCK_IN_HEIGHT - 1:0];
-wire [31:0][BLOCK_IN_WIDTH - 1: 0] _blocksY [BLOCK_IN_HEIGHT - 1:0];
-wire [BLOCK_IN_WIDTH - 1: 0] _isBlockActive [BLOCK_IN_HEIGHT - 1:0];;
-reg [31:0][BLOCK_IN_WIDTH - 1: 0] blocksX [BLOCK_IN_HEIGHT - 1:0];
-reg [31:0][BLOCK_IN_WIDTH - 1: 0] blocksY [BLOCK_IN_HEIGHT - 1:0];
-reg [BLOCK_IN_WIDTH - 1: 0] isBlockActive [BLOCK_IN_HEIGHT - 1:0];
-BlockManager _blockMan #(SCR_W, SCR_H, BLK_W, BLK_H)
-			(_blocksX, _blocksY, isBlockActive, newView, minY,
+BlockManager #(.SCREEN_WIDTH(SCR_W),
+	.SCREEN_HEIGHT(SCR_H),
+	.BLOCK_WIDTH(BLK_W),
+	.BLOCK_HEIGHT(BLK_H)) _blockMan
+			(_blocksX, _blocksY, _isBlockActive, newView, minY,
 			collisionX, collisionY, hasCollide, _reset);
 
-// view manager
-wire _minYCrossed, _newView;
-wire [31: 0] _minY;
-reg newView;
-reg [31: 0] minY;
-ViewManager _viewMan #(SCR_W, SCR_H, BLK_W, BLK_H)
+ViewManager #(.SCREEN_WIDTH(SCR_W),
+	.SCREEN_HEIGHT(SCR_H),
+	.BLOCK_WIDTH(BLK_W),
+	.BLOCK_HEIGHT(BLK_H)) _viewMan
 			(_minYCrossed, _newView, _minY, doodleY, _reset);
 
-// collision detector
-wire _hasCollide;
-wire [31: 0] _collisionX, _collisionY;
-reg hasCollide;
-reg [31 : 0] collisionX, collisionY;
-Collisiondetector _collisionDetector #(SCR_W, SCR_H, BLK_W, BLK_H)
+CollisionDetector #(.SCREEN_WIDTH(SCR_W),
+	.SCREEN_HEIGHT(SCR_H),
+	.BLOCK_WIDTH(BLK_W),
+	.BLOCK_HEIGHT(BLK_H)) _collisionDetector
 			(_collisionX, _collisionY, _hasCollide, doodleX, doodleY,
 			blocksX, blocksY, isBlockActive);
+
+RenderBox #(.SCREEN_WIDTH(SCR_W),
+	.SCREEN_HEIGHT(SCR_H),
+	.BLOCK_WIDTH(BLK_W),
+	.BLOCK_HEIGHT(BLK_H)) _renderBox 
+			(_screen, doodleX, doodleY, blocksX, blocksY, isBlockActive);
 
 // connect wires and registers
 always @(_screen, left, right, reset, clk,
@@ -80,7 +101,7 @@ begin
 
 	_left = left;
 	_right = right;
-	_reset = reste;
+	_reset = reset;
 	_clk = clk;
 
 	doodleX = _doodleX;
