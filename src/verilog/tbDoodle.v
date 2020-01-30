@@ -19,9 +19,12 @@ module tbDoodle();
 		clk = 0;
 		# 10
 		reset = 0;
-		# 3000
+		# 100
+		right = 1;
+		# 40
+		right = 0;
+		# 250
 		$finish();
-
 	end
 	
 	always

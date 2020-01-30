@@ -16,8 +16,8 @@ output reg [31: 0] collisionX, collisionY;
 // INPUT
 //[31:0][(BLOCK_IN_HEIGHT - 1) * (BLOCK_IN_WIDTH - 1):0]
 input [31:0] doodleX, doodleY;
-input wire [31:0][COUNT_BLOCKS - 1:0] blocksX; // 
-input wire [31:0][COUNT_BLOCKS - 1:0] blocksY; // 
+input wire [COUNT_BLOCKS - 1:0][31:0] blocksX; // 
+input wire [COUNT_BLOCKS - 1:0][31:0] blocksY; // 
 input wire [COUNT_BLOCKS - 1:0] isBlockActive; // 
 
 // 
@@ -26,25 +26,21 @@ integer i, j, index;
 always @(doodleX, doodleY, blocksY, blocksX, isBlockActive)
 begin
 	hasCollide = 0;
-	for (i = 0; i < BLOCK_WIDTH; i++)
+	for (i = 0; i < COUNT_BLOCKS; i++)
 	begin
-		for (j = 0; j < BLOCK_HEIGHT; j++)
+		if (isBlockActive[i] == 1)
 		begin
-			index = (i * BLOCK_IN_HEIGHT) + j;
-			if (isBlockActive[index] == 1)
+			if(doodleY == blocksY[i])
 			begin
-				if (doodleY == blocksY[index])
+				if(doodleX <= (blocksX[i] + BLOCK_WIDTH) && doodleX >= blocksX[i])
 				begin
-					if (doodleX <= (blocksX[index] + BLOCK_WIDTH))
-					begin
-						hasCollide = 1;
-						collisionX = i;
-						collisionY = j;
-					end
+					hasCollide = 1;
+					collisionX = blocksX[i];
+					collisionY = blocksY[i];
 				end
 			end
 		end
-	end
+	end	
 end
 endmodule
 

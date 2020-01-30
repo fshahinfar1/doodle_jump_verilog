@@ -49,7 +49,7 @@ begin
 	begin
 		for (i = 0; i < COUNT_BLOCKS; i++)
 		begin
-			if (i[0] == 0) 
+			if (i[0] == 0 && i[1] == 0) 
 			begin
 				isBlockActive[i] = 1;
 			end
@@ -63,7 +63,7 @@ begin
 	else if (newView)
 	begin
 		$display("NEWVIEW!!!!!");
-		/*for (i = 0; i < BLOCK_IN_WIDTH; i++)
+		for (i = 0; i < BLOCK_IN_WIDTH; i++)
 		begin
 			// TODO: check miny to be greater
 			// initialize the Y of the block just at the bottom
@@ -81,7 +81,6 @@ begin
 				end
 			end
 		end
-		*/
 	end
 end
 endmodule

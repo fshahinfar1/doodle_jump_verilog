@@ -12,6 +12,7 @@ reg [31:0] halfScreenPos;
 
 always @(reset, doodleY, minY, halfScreenPos)
 begin
+	$display("minY: ", minY);
 	newView = 0;
 	minYCrossed = 0;
 	if(reset)

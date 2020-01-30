@@ -58,7 +58,8 @@ end
 
 always @(posedge clk)
 begin
-	$display("doodle, state:, " , state);
+	$display("doodle, state:, " , state, " Y: ", doodleY);
+	$display("hc", hasCollide);
 	if (!reset)
 	begin
 		state = nextState;
@@ -69,9 +70,16 @@ end
 // calculate next state
 always @(state, doodleY, maxJumpThreshold, hitGround)
 begin
-	if (state == UP && doodleY == maxJumpThreshold) nextState = DOWN;
-	else if (hitGround) nextState = UP;
-	else nextState = state;
+	if (state == UP) 
+	begin
+		if(doodleY >= maxJumpThreshold)nextState = DOWN;
+		else state = UP;
+	end
+	else 
+	begin
+		if (hitGround) nextState = UP;
+		else state = DOWN;
+	end
 end
 
 /* 
@@ -86,13 +94,17 @@ begin
 		if (falling)
 		begin
 			// state  == DOWN;
-			doodleY = doodleY - 1;
+			doodleY <= doodleY - 2;
 		end
 		else
 		begin
 			// state == UP;
-			doodleY = doodleY + 1;
+			doodleY <= doodleY + 2;
 		end
+
+		if (right) doodleX <= doodleX + 1;
+		else if (left) doodleX <= doodleX - 1;
+		else doodleX = doodleX;
 	end
 end
 endmodule
