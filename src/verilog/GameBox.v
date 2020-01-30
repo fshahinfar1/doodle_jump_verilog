@@ -7,8 +7,8 @@ localparam countPulseBeforePhysicsUpdate=1;
 localparam SCR_W=30;
 localparam SCR_H=30;
 localparam BLK_W=3;
-localparam BLK_H=2;
-localparam MAX_JMP_H=5;
+localparam BLK_H=3;
+localparam MAX_JMP_H=3;
 localparam BLOCK_IN_WIDTH = SCR_W / BLK_W;
 localparam BLOCK_IN_HEIGHT = SCR_H / BLK_H;
 localparam COUNT_BLOCKS = BLOCK_IN_HEIGHT * BLOCK_IN_WIDTH;
@@ -133,6 +133,7 @@ begin
 
 	blocksX = _blocksX;
 	blocksY = _blocksY;
+	isBlockActive = _isBlockActive;
 
 	minY = _minY;
 	newView = _newView;
@@ -140,6 +141,5 @@ begin
 	collisionX = _collisionX;
 	collisionY = _collisionY;
 	hasCollide = _hasCollide;
-
 end
 endmodule

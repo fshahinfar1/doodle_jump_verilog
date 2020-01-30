@@ -53,10 +53,12 @@ begin
 		base = doodleY;
 		maxJumpThreshold = base + MAX_JUMP_HEIGHT;
 	end
+	else ;
 end
 
 always @(posedge clk)
 begin
+	$display("doodle, state:, " , state);
 	if (!reset)
 	begin
 		state = nextState;
@@ -69,7 +71,7 @@ always @(state, doodleY, maxJumpThreshold, hitGround)
 begin
 	if (state == UP && doodleY == maxJumpThreshold) nextState = DOWN;
 	else if (hitGround) nextState = UP;
-	else ;
+	else nextState = state;
 end
 
 /* 

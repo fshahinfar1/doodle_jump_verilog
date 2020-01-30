@@ -9,7 +9,7 @@ module  RenderBox#(parameter SCREEN_WIDTH=400,
 localparam WHITE=24'hff_ff_ff;
 localparam GRAY=24'h0f_af_0f;
 localparam GREEN=24'h00_ff_00;
-localparam BROWN=24'hff_00_00;
+localparam BROWN=24'hff_00_0f;
 localparam BKCOLOR=GRAY;
 localparam DOODLE=GREEN;
 localparam BLOCK=BROWN;
@@ -28,7 +28,7 @@ input wire [COUNT_BLOCKS-1:0][31: 0] blocksY;
 input wire [COUNT_BLOCKS-1:0] isBlockActive;
 
 integer i, j, k, index, scrIndex;
-reg x, y;
+reg [31:0] x, y;
 
 always @(doodleX, doodleY, blocksX, blocksY, isBlockActive, reset)
 begin
@@ -45,21 +45,19 @@ begin
 	// end
 
 	// render blocks
-	for (i = 0; i < BLOCK_WIDTH; i++)
+	for (i = 0; i < COUNT_BLOCKS; i++)
 	begin
-		for (j = 0; j < BLOCK_HEIGHT; j++)
+		if (isBlockActive[i] == 1)
 		begin
-			index = (i * BLOCK_IN_HEIGHT) + j;
-			if (isBlockActive[index] == 1)
+			//$display("is active: ", isBlockActive[i] ,", i: ", i);
+			for (k = 0; k < BLOCK_WIDTH; k++)
 			begin
-				for (k = 0; k < BLOCK_WIDTH; k++)
+				x = blocksX[i] + k;
+				y = blocksY[i];
+				if (x==X && y==Y)
 				begin
-					x = blocksX[index] + k;
-					y = blocksX[index];
-					if (x==X && y==Y)
-					begin
-						color=BLOCK;
-					end
+					//$display("block", x, y, ":", X, Y);
+					color=BLOCK;
 				end
 			end
 		end

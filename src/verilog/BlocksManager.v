@@ -31,8 +31,8 @@ input newView, hasCollide, reset;
 input [31: 0] collisionX, collisionY, minY;  // a 32 bit integer for showing the index
 
 // OUTPUTS
-output reg [31:0][COUNT_BLOCKS-1:0] blocksX; // 
-output reg [31:0] [COUNT_BLOCKS- 1:0]blocksY; // 
+output reg [COUNT_BLOCKS-1:0][31:0] blocksX; // 
+output reg [COUNT_BLOCKS- 1:0][31:0] blocksY; // 
 output reg [COUNT_BLOCKS- 1:0] isBlockActive; // 
 
 // Control register
@@ -43,11 +43,27 @@ integer i, j, index;
 // TODO: moving blocks,
 // TODO: destroying blocks,
 // TODO: random placement
-always @(newView, reset)
+always @(newView, reset, minY)
 begin
-	if (newView)
+	if (reset)
 	begin
-		for (i = 0; i < BLOCK_IN_WIDTH; i++)
+		for (i = 0; i < COUNT_BLOCKS; i++)
+		begin
+			if (i[0] == 0) 
+			begin
+				isBlockActive[i] = 1;
+			end
+			else isBlockActive[i] = 0;
+
+			blocksX[i] = (i / BLOCK_IN_HEIGHT) * BLOCK_WIDTH;	
+			blocksY[i] = (i % BLOCK_IN_HEIGHT) * BLOCK_HEIGHT;
+			// $display(blocksX[i],", ", blocksY[i]);
+		end
+	end
+	else if (newView)
+	begin
+		$display("NEWVIEW!!!!!");
+		/*for (i = 0; i < BLOCK_IN_WIDTH; i++)
 		begin
 			// TODO: check miny to be greater
 			// initialize the Y of the block just at the bottom
@@ -65,52 +81,7 @@ begin
 				end
 			end
 		end
-	end
-
-	if (reset)
-	begin
-		for (j = 0; j < BLOCK_IN_HEIGHT; j++)
-		begin
-			// initialize the X of the blocks just at the left side
-			// of the screen
-			blocksX[j] = 0;
-		end
-		for (i = 0; i < BLOCK_IN_WIDTH; i++)
-		begin
-			// initialize the Y of the block just at the bottom
-			index = (i * BLOCK_IN_HEIGHT);
-			blocksY[index] = 0;
-		end
-
-		for (j = 0; j < BLOCK_IN_HEIGHT; j++)
-		begin
-			for (i = 1; i < BLOCK_IN_WIDTH; i++)
-			begin
-				index = (i * BLOCK_IN_HEIGHT) + j;
-				blocksX[index] = blocksX[index - BLOCK_IN_HEIGHT] + BLOCK_WIDTH;
-			end
-		end
-
-		for (j = 1; j < BLOCK_IN_HEIGHT; j++)
-		begin
-			for (i = 0; i < BLOCK_IN_WIDTH; i++)
-			begin
-				index = (i * BLOCK_IN_HEIGHT) + j;
-				blocksY[index] = blocksY[index-1] + BLOCK_IN_HEIGHT;
-			end
-		end
-
-		for (j = 0; j < BLOCK_IN_HEIGHT; j++)
-		begin
-			for (i = 0; i < BLOCK_IN_WIDTH; i++)
-			begin
-				// TODO: only active some of the blocks not
-				// all
-				index = (i * BLOCK_IN_HEIGHT) + j;
-				isBlockActive[index] = 1;
-			end
-		end
-
+		*/
 	end
 end
 endmodule

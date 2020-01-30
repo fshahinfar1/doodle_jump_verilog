@@ -12,6 +12,9 @@ module tbDoodle();
 		$dumpfile("test.vcd");
 		$dumpvars(0,tbDoodle);
 		$monitor("time: %t, clk: %b, ph: %b", $time, clk, _gameBox.physicsUpdate);
+		reset = 0;
+		clk = 0;
+		# 10
 		reset = 1;
 		clk = 0;
 		# 10

@@ -28,8 +28,6 @@ begin
 			minYCrossed = 1'b1;
 		end
 		
-		$display("doodle", doodleY);
-		$display("hfScr", halfScreenPos);
 		if (doodleY > halfScreenPos) 
 		begin
 			// if doodle crossed half of the screen then update
