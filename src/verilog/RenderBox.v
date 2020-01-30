@@ -7,10 +7,10 @@ module  RenderBox#(parameter SCREEN_WIDTH=400,
 	(color, doodleX, doodleY, blocksX, blocksY, minY, isBlockActive, reset);
 
 localparam WHITE=24'hff_ff_ff;
-localparam RND=24'h00_ab_00;
+localparam GRAY=24'h0f_af_0f;
 localparam GREEN=24'h00_ff_00;
 localparam BROWN=24'hff_00_00;
-localparam BKCOLOR=RND;
+localparam BKCOLOR=GRAY;
 localparam DOODLE=GREEN;
 localparam BLOCK=BROWN;
 
@@ -64,11 +64,11 @@ begin
 			end
 		end
 	end
-	$display(doodleX," ", doodleY - minY, ":", X, ",", Y);
+	// $display(doodleX," ", doodleY," minY:", minY, "  ", X, ",", Y);
 	if (doodleX == X && (doodleY - minY) == Y)
 	begin
 	color = DOODLE;
-	$display("d:,", DOODLE);		
+	// $display("d:,", DOODLE);		
 	end
 
 	// render doodle
