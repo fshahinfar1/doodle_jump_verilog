@@ -63,25 +63,14 @@ begin
 	else if (newView)
 	begin
 		$display("NEWVIEW!!!!!");
-		for (i = 0; i < BLOCK_IN_WIDTH; i++)
+		for (i = 0; i < COUNT_BLOCKS; i++)
 		begin
-			// TODO: check miny to be greater
-			// initialize the Y of the block just at the bottom
-			blocksY[0] = {BLOCK_IN_WIDTH{minY}}; // FIXME: ??
-		end
-
-		for (j = 1; j < BLOCK_IN_HEIGHT; j++)
-		begin
-			for (i = 0; i < BLOCK_IN_WIDTH; i++)
+			if (blocksY[i] < minY)
 			begin
-				index = (i * BLOCK_IN_HEIGHT)  + j;
-				if (blocksY[index] < minY)
-				begin
-					blocksY[index] = minY + blocksY[index - 1];
-				end
+				isBlockActive[i] = 0;
+				//blocksY[index] = minY + blocksY[index - 1];
 			end
 		end
 	end
 end
 endmodule
-

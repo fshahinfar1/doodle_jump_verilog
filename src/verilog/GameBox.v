@@ -7,8 +7,8 @@ localparam countPulseBeforePhysicsUpdate=1;
 localparam SCR_W=30;
 localparam SCR_H=30;
 localparam BLK_W=3;
-localparam BLK_H=3;
-localparam MAX_JMP_H=1;
+localparam BLK_H=1;
+localparam MAX_JMP_H=2;
 localparam BLOCK_IN_WIDTH = SCR_W / BLK_W;
 localparam BLOCK_IN_HEIGHT = SCR_H / BLK_H;
 localparam COUNT_BLOCKS = BLOCK_IN_HEIGHT * BLOCK_IN_WIDTH;
@@ -70,6 +70,9 @@ begin
 	end
 end
 
+wire _gameOver = _minYCrossed;
+reg gameOver;
+
 DoodleManager #(.SCREEN_WIDTH(SCR_W),
 	.SCREEN_HEIGHT(SCR_H),
 	.BLOCK_WIDTH(BLK_W),
@@ -111,7 +114,7 @@ generate
 				.X(px),
 				.Y(py)) _renderBox 
 						(_screen[(px * SCR_H)+py], doodleX, doodleY, blocksX, blocksY,
-						minY, isBlockActive, reset);
+						minY, isBlockActive, gameOver, reset);
 		end
 	end
 endgenerate
@@ -119,7 +122,8 @@ endgenerate
 // connect wires and registers
 always @(_screen, left, right, reset, clk,
 	_doodleX, _doodleY, _blocksX, _blocksY,
-	_newView, _minY, _collisionX, _collisionY)
+	_newView, _minY, _collisionX, _collisionY,
+	_gameOver)
 begin
 	screen = _screen;
 
@@ -141,5 +145,7 @@ begin
 	collisionX = _collisionX;
 	collisionY = _collisionY;
 	hasCollide = _hasCollide;
+
+	gameOver = _gameOver;
 end
 endmodule

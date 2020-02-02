@@ -1,3 +1,4 @@
+import sys
 import pygame
 import struct
 pygame.init()
@@ -73,7 +74,8 @@ def main_pygame(reader):
         clock.tick(30)
 
 def main():
-    reader = VCDReader('./test.vcd')
+    path = sys.argv[1]
+    reader = VCDReader(path)
     #for m_name in reader._modules:
     #    m = reader._modules[m_name]
     reader.register_on_signal('tbDoodle', 'screen', new_screen_value)

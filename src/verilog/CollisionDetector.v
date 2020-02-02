@@ -30,10 +30,11 @@ begin
 	begin
 		if (isBlockActive[i] == 1)
 		begin
-			if(doodleY == blocksY[i])
+			if(doodleY == blocksY[i] || doodleY - 1 == blocksY[i])
 			begin
 				if(doodleX <= (blocksX[i] + BLOCK_WIDTH) && doodleX >= blocksX[i])
 				begin
+					$display("collide: y: ", doodleY, " by: ", blocksY[i]);
 					hasCollide = 1;
 					collisionX = blocksX[i];
 					collisionY = blocksY[i];

@@ -4,7 +4,7 @@ module ViewManager #(parameter SCREEN_WIDTH=400,
 	BLOCK_HEIGHT=5)
 (minYCrossed, newView, minY, doodleY, reset);
 input reset;
-input [31: 0] doodleY;
+input signed [31: 0] doodleY;
 output reg minYCrossed, newView;
 output reg [31: 0] minY;
 

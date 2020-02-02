@@ -19,11 +19,32 @@ module tbDoodle();
 		clk = 0;
 		# 10
 		reset = 0;
-		# 100
-		right = 1;
 		# 40
-		right = 0;
-		# 250
+		left = 1;
+		# 20
+		left = 0;
+		# 40 right = 1;
+		# 20 right = 0;
+		# 40 left = 1;
+		# 20 left = 0;
+		# 40 right = 1;
+		# 20 right = 0;
+		# 40 left = 1;
+		# 20 left = 0;
+		# 40 right = 1;
+		# 20 right = 0;
+		# 40 left = 1;
+		# 40 left = 0;
+		# 40 right = 1;
+		# 20 right = 0;
+		# 40 left = 1;
+		# 20 left = 0;
+		# 60 left = 0;
+		# 40 right = 1;
+		# 20 right = 0;
+		# 40 left = 1;
+		# 20 left = 0;
+		# 1250
 		$finish();
 	end
 	

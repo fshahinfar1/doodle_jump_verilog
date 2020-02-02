@@ -59,7 +59,7 @@ end
 always @(posedge clk)
 begin
 	$display("doodle, state:, " , state, " Y: ", doodleY);
-	$display("hc", hasCollide);
+	// $display("hc", hasCollide);
 	if (!reset)
 	begin
 		state = nextState;
@@ -94,12 +94,12 @@ begin
 		if (falling)
 		begin
 			// state  == DOWN;
-			doodleY <= doodleY - 2;
+			doodleY <= doodleY - 1;
 		end
 		else
 		begin
 			// state == UP;
-			doodleY <= doodleY + 2;
+			doodleY <= doodleY + 1;
 		end
 
 		if (right) doodleX <= doodleX + 1;
